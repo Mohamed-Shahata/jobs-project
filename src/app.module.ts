@@ -3,6 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AuthModule } from "./modules/auth/auth.module";
 import { User } from "./modules/users/users.entity";
+import { CacheModule } from "@nestjs/cache-manager";
 
 @Module({
   imports: [
@@ -12,11 +13,11 @@ import { User } from "./modules/users/users.entity";
       useFactory: (config: ConfigService) => {
         return {
           type: "postgres",
-          host: "localhost",
+          host: "postgres",
           port: config.get<number>("DB_PORT"),
-          username: config.get<string>("DB_USERNAME"),
-          password: config.get<string>("DB_PASSWORD"),
-          database: config.get<string>("DB_DATABASE"),
+          username: config.get<string>("POSTGRES_USER"),
+          password: config.get<string>("POSTGRES_PASSWORD"),
+          database: config.get<string>("POSTGRES_DB"),
           synchronize: true,
           entities: [User]
         }
@@ -24,8 +25,9 @@ import { User } from "./modules/users/users.entity";
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ".env.development"
-    })
+      envFilePath: ".env"
+    }),
+    CacheModule.register()
   ]
 })
 export class AppModule { };

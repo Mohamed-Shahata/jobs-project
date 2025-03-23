@@ -6,7 +6,7 @@ import { VerifyCallback } from "jsonwebtoken";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
-  constructor(private readonly config: ConfigService) {
+  constructor(private config: ConfigService) {
     super({
       clientID: config.get<string>("CLIENT_ID"),
       clientSecret: config.get<string>("CLIENT_SECRET"),

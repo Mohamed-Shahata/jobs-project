@@ -1,0 +1,26 @@
+### get all jobs
+GET http://localhost:3000/api/jobs
+
+### get single job
+GET http://localhost:3000/api/jobs/3
+
+### create a new job
+POST http://localhost:3000/api/jobs
+Content-Type: application/json
+
+{
+  "title": "Backend developer",
+  "description": "Nodejs experince and postgresql",
+  "price": 1000
+}
+
+### update a job
+PUT  http://localhost:3000/api/jobs/1
+Content-Type: application/json
+
+{
+  "price": 550
+}
+
+### delete job
+DELETE http://localhost:3000/api/jobs/1

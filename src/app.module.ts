@@ -4,10 +4,15 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AuthModule } from "./modules/auth/auth.module";
 import { User } from "./modules/users/users.entity";
 import { CacheModule } from "@nestjs/cache-manager";
+import redisStore from 'cache-manager-redis-store';
+import { JobModule } from "./modules/jobs/jobs.module";
+import { Job } from "./modules/jobs/jobs.entity";
+
 
 @Module({
   imports: [
     AuthModule,
+    JobModule,
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
@@ -19,7 +24,7 @@ import { CacheModule } from "@nestjs/cache-manager";
           password: config.get<string>("POSTGRES_PASSWORD"),
           database: config.get<string>("POSTGRES_DB"),
           synchronize: true,
-          entities: [User]
+          entities: [User, Job]
         }
       }
     }),
@@ -27,7 +32,15 @@ import { CacheModule } from "@nestjs/cache-manager";
       isGlobal: true,
       envFilePath: ".env"
     }),
-    CacheModule.register()
+    CacheModule.register({
+      inject: ConfigService,
+      useFactory: (config: ConfigService) => ({
+        isGlobal: true,
+        store: redisStore,
+        host: config.get<string>("REDIS_HOST"),
+        port: config.get<number>("REDIS_PORT")
+      })
+    })
   ]
 })
 export class AppModule { };
